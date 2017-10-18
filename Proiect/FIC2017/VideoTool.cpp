@@ -1,6 +1,13 @@
 #include <sstream>
 #include <string>
 #include <iostream>
+
+#include <ctime>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
+
+#include <thread>
+
 //#include <opencv2\highgui.h>
 #include "opencv2/highgui/highgui.hpp"
 //#include <opencv2\cv.h>
@@ -46,7 +53,6 @@ void on_trackbar(int, void*)
 }
 
 string intToString(int number) {
-
 
 	std::stringstream ss;
 	ss << number;
@@ -178,6 +184,7 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 int main(int argc, char* argv[])
 {
 
+
 	//some boolean variables for different functionality within this
 	//program
 	bool trackObjects = true;
@@ -189,54 +196,84 @@ int main(int argc, char* argv[])
 	//matrix storage for HSV image
 	Mat HSV;
 	//matrix storage for binary threshold image
-	Mat threshold;
+	Mat us;
+	Mat them;
 	//x and y values for the location of the object
 	int x = 0, y = 0;
 	//create slider bars for HSV filtering
-	createTrackbars();
+	//createTrackbars();
 	//video capture object to acquire webcam feed
 	VideoCapture capture;
 	//open capture object at location zero (default location for webcam)
-	capture.open(0);
+	capture.open("rtmp://172.16.254.99/live/nimic");
 	//set height and width of capture frame
 	capture.set(CV_CAP_PROP_FRAME_WIDTH, FRAME_WIDTH);
 	capture.set(CV_CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT);
 	//start an infinite loop where webcam feed is copied to cameraFeed matrix
 	//all of our operations will be performed within this loop
 
+	//FPS
+	int frameCounter = 0;
+	int tick = 0;
+  int fps;
+  std::time_t timeBegin = std::time(0);
 
 
-	
 	while (1) {
 
+		frameCounter++;
+    std::time_t timeNow = std::time(0) - timeBegin;
+
+		if (timeNow - tick >= 1)
+    {
+        tick++;
+        fps = frameCounter;
+        frameCounter = 0;
+    }
 
 		//store image to matrix
 		capture.read(cameraFeed);
 		//convert frame from BGR to HSV colorspace
 		cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
+
+		cv::putText(cameraFeed, cv::format("Average FPS=%d", fps ), cv::Point(30, 30), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,255,255));
+
 		//filter HSV image between values and store filtered image to
 		//threshold matrix
-		inRange(HSV, Scalar(H_MIN, S_MIN, V_MIN), Scalar(H_MAX, S_MAX, V_MAX), threshold);
+
+		//std::thread t1(inRange, HSV, Scalar(156, 103, 0), Scalar(220, 256, 256), us);
+		//std::thread t2(inRange, HSV, Scalar(17, 17, 195), Scalar(78, 256, 256), them);
+
+		//t1.join();
+		//t2.join();
+
+		inRange(HSV, Scalar(156, 103, 0), Scalar(220, 256, 256), us);
+		inRange(HSV, Scalar(17, 17, 195), Scalar(78, 256, 256), them);
 		//perform morphological operations on thresholded image to eliminate noise
 		//and emphasize the filtered object(s)
 		if (useMorphOps)
-			morphOps(threshold);
+		{
+			morphOps(us);
+			morphOps(them);
+		}
 		//pass in thresholded frame to our object tracking function
 		//this function will return the x and y coordinates of the
 		//filtered object
 		if (trackObjects)
-			trackFilteredObject(x, y, threshold, cameraFeed);
+		{
+			trackFilteredObject(x, y, us, cameraFeed);
+			trackFilteredObject(x, y, them, cameraFeed);
+		}
 
 		//show frames
-		imshow(windowName2, threshold);
+		//imshow(windowName2, threshold);
 		imshow(windowName, cameraFeed);
-		imshow(windowName1, HSV);
+		//imshow(windowName1, HSV);
 		setMouseCallback("Original Image", on_mouse, &p);
 		//delay 30ms so that screen can refresh.
 		//image will not appear without this waitKey() command
-		waitKey(30);
+		waitKey(1);
 	}
 
 	return 0;
 }
-
