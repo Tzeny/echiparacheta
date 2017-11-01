@@ -97,6 +97,7 @@ VideoTool: /usr/local/lib/libopencv_superres.so.3.1.0
 VideoTool: /usr/local/lib/libopencv_video.so.3.1.0
 VideoTool: /usr/local/lib/libopencv_videoio.so.3.1.0
 VideoTool: /usr/local/lib/libopencv_videostab.so.3.1.0
+VideoTool: Sockets/libSockets.a
 VideoTool: /usr/local/lib/libopencv_objdetect.so.3.1.0
 VideoTool: /usr/local/lib/libopencv_calib3d.so.3.1.0
 VideoTool: /usr/local/lib/libopencv_features2d.so.3.1.0

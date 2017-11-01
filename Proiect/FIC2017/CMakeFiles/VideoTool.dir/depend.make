@@ -121,4 +121,5 @@ CMakeFiles/VideoTool.dir/VideoTool.cpp.o: /usr/local/include/opencv2/videostab/o
 CMakeFiles/VideoTool.dir/VideoTool.cpp.o: /usr/local/include/opencv2/videostab/ring_buffer.hpp
 CMakeFiles/VideoTool.dir/VideoTool.cpp.o: /usr/local/include/opencv2/videostab/stabilizer.hpp
 CMakeFiles/VideoTool.dir/VideoTool.cpp.o: /usr/local/include/opencv2/videostab/wobble_suppression.hpp
+CMakeFiles/VideoTool.dir/VideoTool.cpp.o: Sockets/sockets.h
 

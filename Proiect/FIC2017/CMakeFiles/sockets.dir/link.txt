@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/sockets.dir/sockets.cpp.o  -o sockets -rdynamic 

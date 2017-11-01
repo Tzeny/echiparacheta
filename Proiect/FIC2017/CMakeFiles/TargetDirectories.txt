@@ -1,1 +1,2 @@
+/home/cloud/echiparacheta/Proiect/FIC2017/Sockets/CMakeFiles/Sockets.dir
 /home/cloud/echiparacheta/Proiect/FIC2017/CMakeFiles/VideoTool.dir

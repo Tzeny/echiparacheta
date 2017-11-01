@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/cloud/echiparacheta/Proiect/FIC2017/Sockets/sockets.cpp
+sockets.h
+/home/cloud/echiparacheta/Proiect/FIC2017/Sockets/sockets.h
+
+/home/cloud/echiparacheta/Proiect/FIC2017/Sockets/sockets.h
+stdio.h
+-
+stdlib.h
+-
+netdb.h
+-
+netinet/in.h
+-
+unistd.h
+-
+string.h
+-
+

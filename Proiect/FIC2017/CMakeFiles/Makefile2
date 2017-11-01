@@ -56,10 +56,10 @@ CMAKE_BINARY_DIR = /home/cloud/echiparacheta/Proiect/FIC2017
 # Target rules for target CMakeFiles/VideoTool.dir
 
 # All Build rule for target.
-CMakeFiles/VideoTool.dir/all:
+CMakeFiles/VideoTool.dir/all: Sockets/CMakeFiles/Sockets.dir/all
 	$(MAKE) -f CMakeFiles/VideoTool.dir/build.make CMakeFiles/VideoTool.dir/depend
 	$(MAKE) -f CMakeFiles/VideoTool.dir/build.make CMakeFiles/VideoTool.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/cloud/echiparacheta/Proiect/FIC2017/CMakeFiles  1
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/cloud/echiparacheta/Proiect/FIC2017/CMakeFiles  2
 	@echo "Built target VideoTool"
 .PHONY : CMakeFiles/VideoTool.dir/all
 
@@ -69,7 +69,7 @@ all: CMakeFiles/VideoTool.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/VideoTool.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/cloud/echiparacheta/Proiect/FIC2017/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/cloud/echiparacheta/Proiect/FIC2017/CMakeFiles 2
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/VideoTool.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/cloud/echiparacheta/Proiect/FIC2017/CMakeFiles 0
 .PHONY : CMakeFiles/VideoTool.dir/rule
@@ -85,6 +85,56 @@ CMakeFiles/VideoTool.dir/clean:
 
 # clean rule for target.
 clean: CMakeFiles/VideoTool.dir/clean
+.PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory Sockets
+
+# Convenience name for "all" pass in the directory.
+Sockets/all: Sockets/CMakeFiles/Sockets.dir/all
+.PHONY : Sockets/all
+
+# Convenience name for "clean" pass in the directory.
+Sockets/clean: Sockets/CMakeFiles/Sockets.dir/clean
+.PHONY : Sockets/clean
+
+# Convenience name for "preinstall" pass in the directory.
+Sockets/preinstall:
+.PHONY : Sockets/preinstall
+
+#=============================================================================
+# Target rules for target Sockets/CMakeFiles/Sockets.dir
+
+# All Build rule for target.
+Sockets/CMakeFiles/Sockets.dir/all:
+	$(MAKE) -f Sockets/CMakeFiles/Sockets.dir/build.make Sockets/CMakeFiles/Sockets.dir/depend
+	$(MAKE) -f Sockets/CMakeFiles/Sockets.dir/build.make Sockets/CMakeFiles/Sockets.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/cloud/echiparacheta/Proiect/FIC2017/CMakeFiles  1
+	@echo "Built target Sockets"
+.PHONY : Sockets/CMakeFiles/Sockets.dir/all
+
+# Include target in all.
+all: Sockets/CMakeFiles/Sockets.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+Sockets/CMakeFiles/Sockets.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/cloud/echiparacheta/Proiect/FIC2017/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 Sockets/CMakeFiles/Sockets.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/cloud/echiparacheta/Proiect/FIC2017/CMakeFiles 0
+.PHONY : Sockets/CMakeFiles/Sockets.dir/rule
+
+# Convenience name for target.
+Sockets: Sockets/CMakeFiles/Sockets.dir/rule
+.PHONY : Sockets
+
+# clean rule for target.
+Sockets/CMakeFiles/Sockets.dir/clean:
+	$(MAKE) -f Sockets/CMakeFiles/Sockets.dir/build.make Sockets/CMakeFiles/Sockets.dir/clean
+.PHONY : Sockets/CMakeFiles/Sockets.dir/clean
+
+# clean rule for target.
+clean: Sockets/CMakeFiles/Sockets.dir/clean
 .PHONY : clean
 
 #=============================================================================

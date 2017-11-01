@@ -111,6 +111,19 @@ VideoTool/fast:
 	$(MAKE) -f CMakeFiles/VideoTool.dir/build.make CMakeFiles/VideoTool.dir/build
 .PHONY : VideoTool/fast
 
+#=============================================================================
+# Target rules for targets named Sockets
+
+# Build rule for target.
+Sockets: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Sockets
+.PHONY : Sockets
+
+# fast build rule for target.
+Sockets/fast:
+	$(MAKE) -f Sockets/CMakeFiles/Sockets.dir/build.make Sockets/CMakeFiles/Sockets.dir/build
+.PHONY : Sockets/fast
+
 VideoTool.o: VideoTool.cpp.o
 .PHONY : VideoTool.o
 
@@ -144,6 +157,7 @@ help:
 	@echo "... VideoTool"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... Sockets"
 	@echo "... VideoTool.o"
 	@echo "... VideoTool.i"
 	@echo "... VideoTool.s"
