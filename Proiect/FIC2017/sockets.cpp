@@ -90,13 +90,14 @@ void processBuffer(int socketfd, const char * buffer)
 
   writeData(socketfd,"s");
 }
-
+/*
 int main(int argc, char *argv[]) {
   int socketfd = connect(20232,"193.226.12.217");
 
-  processBuffer(socketfd, "ff");
+ // processBuffer(socketfd, "ff");
 
   shutdown(socketfd,2);
   
   return 0;
 }
+*/

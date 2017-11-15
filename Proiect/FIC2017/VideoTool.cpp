@@ -67,33 +67,6 @@ string intToString(int number) {
 	return ss.str();
 }
 
-void createTrackbars() {
-	//create window for trackbars
-
-
-	namedWindow(trackbarWindowName, 0);
-	//create memory to store trackbar name on window
-	char TrackbarName[50];
-	sprintf(TrackbarName, "H_MIN", H_MIN);
-	sprintf(TrackbarName, "H_MAX", H_MAX);
-	sprintf(TrackbarName, "S_MIN", S_MIN);
-	sprintf(TrackbarName, "S_MAX", S_MAX);
-	sprintf(TrackbarName, "V_MIN", V_MIN);
-	sprintf(TrackbarName, "V_MAX", V_MAX);
-	//create trackbars and insert them into window
-	//3 parameters are: the address of the variable that is changing when the trackbar is moved(eg.H_LOW),
-	//the max value the trackbar can move (eg. H_HIGH),
-	//and the function that is called whenever the trackbar is moved(eg. on_trackbar)
-	//                                  ---->    ---->     ---->
-	createTrackbar("H_MIN", trackbarWindowName, &H_MIN, H_MAX, on_trackbar);
-	createTrackbar("H_MAX", trackbarWindowName, &H_MAX, H_MAX, on_trackbar);
-	createTrackbar("S_MIN", trackbarWindowName, &S_MIN, S_MAX, on_trackbar);
-	createTrackbar("S_MAX", trackbarWindowName, &S_MAX, S_MAX, on_trackbar);
-	createTrackbar("V_MIN", trackbarWindowName, &V_MIN, V_MAX, on_trackbar);
-	createTrackbar("V_MAX", trackbarWindowName, &V_MAX, V_MAX, on_trackbar);
-
-
-}
 void drawObject(int x, int y, Mat &frame) {
 
 	//use some of the openCV drawing functions to draw crosshairs
@@ -177,7 +150,7 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 			}
 			//let user know you found an object
 			if (objectFound == true) {
-				putText(cameraFeed, "Tracking Object", Point(0, 50), 2, 1, Scalar(0, 255, 0), 2);
+				//putText(cameraFeed, "Tracking Object", Point(0, 50), 2, 1, Scalar(0, 255, 0), 2);
 				//draw object location on screen
 				//cout << x << "," << y;
 				drawObject(x, y, cameraFeed);
@@ -189,7 +162,7 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 		else putText(cameraFeed, "TOO MUCH NOISE! ADJUST FILTER", Point(0, 50), 1, 2, Scalar(0, 0, 255), 2);
 	}
 }
-int main(int argc, char *argv[])
+/*int main(int argc, char *argv[])
 {
 	int socketfd = connect(20232,"193.226.12.217");
 
@@ -198,8 +171,8 @@ int main(int argc, char *argv[])
   shutdown(socketfd,2);
 
   return 0;
-}
-/*
+}*/
+
 int main(int argc, char* argv[])
 {
 
@@ -217,6 +190,7 @@ int main(int argc, char* argv[])
 	//matrix storage for binary threshold image
 	Mat us;
 	Mat them;
+	Mat usDirection;
 	//x and y values for the location of the object
 	int x = 0, y = 0;
 	//create slider bars for HSV filtering
@@ -225,6 +199,18 @@ int main(int argc, char* argv[])
 	VideoCapture capture;
 	//open capture object at location zero (default location for webcam)
 	capture.open("rtmp://172.16.254.99/live/nimic");
+	do{
+		if(!capture.isOpened())
+		{
+			printf("Can not open capture! Retrying in 2 seconds\n");
+			sleep(2);
+			capture.open("rtmp://172.16.254.99/live/nimic");
+		}
+		else{
+			break;
+		}
+	}while(1);
+	printf("Opened capture!\n");
 	//set height and width of capture frame
 	capture.set(CV_CAP_PROP_FRAME_WIDTH, FRAME_WIDTH);
 	capture.set(CV_CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT);
@@ -237,6 +223,7 @@ int main(int argc, char* argv[])
   int fps;
   std::time_t timeBegin = std::time(0);
 
+	cv::Point usCoord,themCoord, usDirectionCoord;
 
 	while (1) {
 
@@ -252,6 +239,10 @@ int main(int argc, char* argv[])
 
 		//store image to matrix
 		capture.read(cameraFeed);
+
+			if(cameraFeed.empty())
+				continue;
+
 		//convert frame from BGR to HSV colorspace
 		cvtColor(cameraFeed, HSV, COLOR_BGR2HSV);
 
@@ -266,23 +257,30 @@ int main(int argc, char* argv[])
 		//t1.join();
 		//t2.join();
 
-		inRange(HSV, Scalar(156, 103, 0), Scalar(220, 256, 256), us);
+		//inRange(HSV, Scalar(156, 103, 0), Scalar(220, 256, 256), us);
+		inRange(HSV, Scalar(94, 38, 69), Scalar(187, 256, 256), us);
 		inRange(HSV, Scalar(17, 17, 195), Scalar(78, 256, 256), them);
+		inRange(HSV, Scalar(37, 70, 65), Scalar(106, 148, 256), usDirection);
 		//perform morphological operations on thresholded image to eliminate noise
 		//and emphasize the filtered object(s)
 		if (useMorphOps)
 		{
 			morphOps(us);
 			morphOps(them);
+			morphOps(usDirection);
 		}
 		//pass in thresholded frame to our object tracking function
 		//this function will return the x and y coordinates of the
 		//filtered object
 		if (trackObjects)
 		{
-			trackFilteredObject(x, y, us, cameraFeed);
-			trackFilteredObject(x, y, them, cameraFeed);
+			trackFilteredObject(usCoord.x, usCoord.y, us, cameraFeed);
+			trackFilteredObject(themCoord.x, themCoord.y, them, cameraFeed);
+			trackFilteredObject(usDirectionCoord.x, usDirectionCoord.y, usDirection, cameraFeed);
 		}
+
+		line(cameraFeed, usCoord, usDirectionCoord, Scalar(0, 0, 255), 2);
+		line(cameraFeed, usCoord, themCoord, Scalar(0, 0, 255), 2);
 
 		//show frames
 		//imshow(windowName2, threshold);
@@ -296,4 +294,3 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-*/
