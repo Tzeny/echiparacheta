@@ -14,12 +14,20 @@
 #include <netdb.h>
 #include <netinet/in.h>
 
+#include <math.h>
+
 //#include <opencv2\highgui.h>
 #include "opencv2/highgui/highgui.hpp"
 //#include <opencv2\cv.h>
 #include "opencv2/opencv.hpp"
 
 #include "sockets.h"
+
+// Converts degrees to radians.
+#define degreesToRadians(angleDegrees) (angleDegrees * M_PI / 180.0)
+
+// Converts radians to degrees.
+#define radiansToDegrees(angleRadians) (angleRadians * 180.0 / M_PI)
 
 using namespace std;
 using namespace cv;
@@ -45,6 +53,7 @@ const std::string windowName1 = "HSV Image";
 const std::string windowName2 = "Thresholded Image";
 const std::string windowName3 = "After Morphological Operations";
 const std::string trackbarWindowName = "Trackbars";
+
 
 
 void on_mouse(int e, int x, int y, int d, void *ptr)
@@ -149,13 +158,13 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 
 			}
 			//let user know you found an object
-			if (objectFound == true) {
+			//if (objectFound == true) {
 				//putText(cameraFeed, "Tracking Object", Point(0, 50), 2, 1, Scalar(0, 255, 0), 2);
 				//draw object location on screen
 				//cout << x << "," << y;
-				drawObject(x, y, cameraFeed);
+				//drawObject(x, y, cameraFeed);
 
-			}
+		//	}
 
 
 		}
@@ -275,8 +284,18 @@ int main(int argc, char* argv[])
 		if (trackObjects)
 		{
 			trackFilteredObject(usCoord.x, usCoord.y, us, cameraFeed);
+			drawObject(usCoord.x, usCoord.y, cameraFeed);
 			trackFilteredObject(themCoord.x, themCoord.y, them, cameraFeed);
+			drawObject(themCoord.x, themCoord.y, cameraFeed);
 			trackFilteredObject(usDirectionCoord.x, usDirectionCoord.y, usDirection, cameraFeed);
+			drawObject(usDirectionCoord.x, usDirectionCoord.y, cameraFeed);
+
+
+
+				double angle = atan2(themCoord.y - usCoord.y, themCoord.x - usCoord.x) - atan2(usDirectionCoord.y - usCoord.y, usDirectionCoord.x - usCoord.x);
+				angle = radiansToDegrees(angle);
+				angle = 360 - angle;
+				printf("%lf\n",angle);
 		}
 
 		line(cameraFeed, usCoord, usDirectionCoord, Scalar(0, 0, 255), 2);
