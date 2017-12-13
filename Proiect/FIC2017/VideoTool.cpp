@@ -39,6 +39,8 @@ int S_MIN = 0;
 int S_MAX = 256;
 int V_MIN = 0;
 int V_MAX = 256;
+int ind=0;
+int lastInd=-1;
 //default capture width and height
 const int FRAME_WIDTH = 640;
 const int FRAME_HEIGHT = 480;
@@ -54,7 +56,17 @@ const std::string windowName2 = "Thresholded Image";
 const std::string windowName3 = "After Morphological Operations";
 const std::string trackbarWindowName = "Trackbars";
 
+typedef struct _color_tracking
+{
+	int H_MIN;
+	int H_MAX;
+	int S_MIN;
+	int S_MAX;
+	int V_MIN;
+	int V_MAX;
+}color_tracking;
 
+color_tracking tracking[5];
 
 void on_mouse(int e, int x, int y, int d, void *ptr)
 {
@@ -67,6 +79,54 @@ void on_mouse(int e, int x, int y, int d, void *ptr)
 void on_trackbar(int, void*)
 {//This function gets called whenever a
  // trackbar position is changed
+
+	if(ind!=lastInd)
+	{
+		setTrackbarPos("H_MIN", trackbarWindowName, tracking[ind].H_MIN);
+		setTrackbarPos("H_MAX", trackbarWindowName, tracking[ind].H_MAX);
+		setTrackbarPos("S_MIN", trackbarWindowName, tracking[ind].S_MIN);
+		setTrackbarPos("S_MAX", trackbarWindowName, tracking[ind].S_MAX);
+		setTrackbarPos("V_MIN", trackbarWindowName, tracking[ind].V_MIN);
+		setTrackbarPos("V_MAX", trackbarWindowName, tracking[ind].V_MAX);
+	}
+	else
+	{
+		 tracking[ind].H_MIN = H_MIN;
+		 tracking[ind].H_MAX = H_MAX;
+		 tracking[ind].S_MIN = S_MIN;
+		 tracking[ind].S_MAX = S_MAX;
+		 tracking[ind].V_MIN = V_MIN;
+		 tracking[ind].V_MAX = V_MAX;
+	}
+	lastInd = ind;
+}
+
+void createTrackbars() {
+	//create window for trackbars
+
+
+	namedWindow(trackbarWindowName, 0);
+	//create memory to store trackbar name on window
+	char TrackbarName[50];
+	sprintf(TrackbarName, "H_MIN", H_MIN);
+	sprintf(TrackbarName, "H_MAX", H_MAX);
+	sprintf(TrackbarName, "S_MIN", S_MIN);
+	sprintf(TrackbarName, "S_MAX", S_MAX);
+	sprintf(TrackbarName, "V_MIN", V_MIN);
+	sprintf(TrackbarName, "V_MAX", V_MAX);
+	sprintf(TrackbarName, "TARGET: 0-us 1-usfront 2-them", ind);
+	//create trackbars and insert them into window
+	//3 parameters are: the address of the variable that is changing when the trackbar is moved(eg.H_LOW),
+	//the max value the trackbar can move (eg. H_HIGH),
+	//and the function that is called whenever the trackbar is moved(eg. on_trackbar)
+	//                                  ---->    ---->     ---->
+	createTrackbar("H_MIN", trackbarWindowName, &H_MIN, 256, on_trackbar);
+	createTrackbar("H_MAX", trackbarWindowName, &H_MAX, 256, on_trackbar);
+	createTrackbar("S_MIN", trackbarWindowName, &S_MIN, 256, on_trackbar);
+	createTrackbar("S_MAX", trackbarWindowName, &S_MAX, 256, on_trackbar);
+	createTrackbar("V_MIN", trackbarWindowName, &V_MIN, 256, on_trackbar);
+	createTrackbar("V_MAX", trackbarWindowName, &V_MAX, 256, on_trackbar);
+	createTrackbar("TARGET: 0-us 1-usfront 2-them", trackbarWindowName, &ind, 2, on_trackbar);
 }
 
 string intToString(int number) {
@@ -185,9 +245,38 @@ void trackFilteredObject(int &x, int &y, Mat threshold, Mat &cameraFeed) {
 int main(int argc, char* argv[])
 {
 
+	tracking[0].H_MIN = 94;
+	tracking[0].H_MAX = 187;
+	tracking[0].S_MIN = 38;
+	tracking[0].S_MAX = 256;
+	tracking[0].V_MIN = 69;
+	tracking[0].V_MAX = 256;
 
+	tracking[1].H_MIN = 17;
+	tracking[1].H_MAX = 78;
+	tracking[1].S_MIN = 17;
+	tracking[1].S_MAX = 256;
+	tracking[1].V_MIN = 195;
+	tracking[1].V_MAX = 256;
+
+	tracking[2].H_MIN = 37;
+	tracking[2].H_MAX = 106;
+	tracking[2].S_MIN = 70;
+	tracking[2].S_MAX = 148;
+	tracking[2].V_MIN = 65;
+	tracking[2].V_MAX = 256;
+
+	createTrackbars();
 	//some boolean variables for different functionality within this
 	//program
+
+	setTrackbarPos("H_MIN", trackbarWindowName, tracking[ind].H_MIN);
+	setTrackbarPos("H_MAX", trackbarWindowName, tracking[ind].H_MAX);
+	setTrackbarPos("S_MIN", trackbarWindowName, tracking[ind].S_MIN);
+	setTrackbarPos("S_MAX", trackbarWindowName, tracking[ind].S_MAX);
+	setTrackbarPos("V_MIN", trackbarWindowName, tracking[ind].V_MIN);
+	setTrackbarPos("V_MAX", trackbarWindowName, tracking[ind].V_MAX);
+
 	bool trackObjects = true;
 	bool useMorphOps = true;
 
@@ -267,9 +356,14 @@ int main(int argc, char* argv[])
 		//t2.join();
 
 		//inRange(HSV, Scalar(156, 103, 0), Scalar(220, 256, 256), us);
-		inRange(HSV, Scalar(94, 38, 69), Scalar(187, 256, 256), us);
-		inRange(HSV, Scalar(17, 17, 195), Scalar(78, 256, 256), them);
-		inRange(HSV, Scalar(37, 70, 65), Scalar(106, 148, 256), usDirection);
+		inRange(HSV, Scalar(tracking[0].H_MIN, tracking[0].S_MIN, tracking[0].V_MIN),
+		Scalar(tracking[0].H_MAX, tracking[0].S_MAX, tracking[0].V_MAX), us);
+		inRange(HSV, Scalar(tracking[1].H_MIN, tracking[1].S_MIN, tracking[1].V_MIN),
+		Scalar(tracking[1].H_MAX, tracking[1].S_MAX, tracking[1].V_MAX), them);
+		inRange(HSV, Scalar(tracking[2].H_MIN, tracking[2].S_MIN, tracking[2].V_MIN),
+		Scalar(tracking[2].H_MAX, tracking[2].S_MAX, tracking[2].V_MAX), usDirection);
+		//inRange(HSV, Scalar(17, 17, 195), Scalar(78, 256, 256), them);
+		//inRange(HSV, Scalar(37, 70, 65), Scalar(106, 148, 256), usDirection);
 		//perform morphological operations on thresholded image to eliminate noise
 		//and emphasize the filtered object(s)
 		if (useMorphOps)
@@ -294,8 +388,9 @@ int main(int argc, char* argv[])
 
 				double angle = atan2(themCoord.y - usCoord.y, themCoord.x - usCoord.x) - atan2(usDirectionCoord.y - usCoord.y, usDirectionCoord.x - usCoord.x);
 				angle = radiansToDegrees(angle);
-				angle = 360 - angle;
-				printf("%lf\n",angle);
+				//angle = 360 - angle;
+				angle = (int)angle % 360;
+				//printf("%lf\n",angle);
 		}
 
 		line(cameraFeed, usCoord, usDirectionCoord, Scalar(0, 0, 255), 2);
